@@ -9,5 +9,6 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/yangtizi/go v1.0.20
 	github.com/yangtizi/log v0.0.0-20210805041628-1ec30e7aa2b5
+	go.etcd.io/etcd/client/v3 v3.5.1
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )

@@ -31,7 +31,7 @@ func (m *TMsSQLDB) init(strConnect string) {
 		return
 	}
 
-	zaplog.Errorf("数据库连接出现问题 connect = [%s] err = []", strConnect, err)
+	zaplog.Errorf("数据库连接出现问题 connect = [%s] err = [%v]", strConnect, err)
 }
 
 func (m *TMsSQLDB) queryRow(strQuery string, args ...interface{}) (*scanner.TRow, error) {
