@@ -65,3 +65,15 @@ func (m *TMySQLDB) exec(strQuery string, args ...interface{}) (sql.Result, error
 	<-m.chpool
 	return rs, err
 }
+
+func (m *TMySQLDB) beginTX() (*sql.Tx, error) {
+	if m.pDB == nil {
+		return nil, errors.New("不存在DB")
+	}
+
+	m.chpool <- 1
+	tx, err := m.pDB.Begin()
+	<-m.chpool
+
+	return tx, err
+}

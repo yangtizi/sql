@@ -62,3 +62,11 @@ func InitDB(strAgent string, strConnect string) {
 
 	zaplog.Warnf("已经存在确有重复创建")
 }
+func BeginTX(strAgent string) (*sql.Tx, error) {
+	v, ok := mapMYSQL.Load(strAgent)
+	if !ok {
+		return nil, errors.New("不存在的DB索引")
+	}
+
+	return v.(*TMySQLDB).beginTX()
+}
