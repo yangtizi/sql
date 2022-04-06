@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/yangtizi/log/zaplog"
+	"github.com/yangtizi/sql/scanner"
 )
 
 // TMySQLDB 单个的数据库
@@ -54,7 +55,7 @@ func (m *TMySQLDB) queryRows(strQuery string, args ...interface{}) (*sql.Rows, e
 	return rows, err
 }
 
-func (m *TMySQLDB) exec(strQuery string, args ...interface{}) (sql.Result, error) {
+func (m *TMySQLDB) exec(strQuery string, args ...interface{}) (*scanner.TResult, error) {
 
 	if m.pDB == nil {
 		return nil, errors.New("不存在DB")
@@ -63,5 +64,16 @@ func (m *TMySQLDB) exec(strQuery string, args ...interface{}) (sql.Result, error
 	m.chpool <- 1
 	rs, err := m.pDB.Exec(strQuery, args...)
 	<-m.chpool
-	return rs, err
+	if err != nil {
+		return nil, err
+	}
+
+	nInsert, err := rs.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	nCount, err := rs.RowsAffected()
+
+	return scanner.NewResult(nInsert, nCount), err
 }

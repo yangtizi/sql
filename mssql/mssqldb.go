@@ -67,7 +67,19 @@ func (m *TMsSQLDB) exec(strQuery string, args ...interface{}) (*scanner.TResult,
 	m.chpool <- 1
 	rs, err := m.pDB.Exec(strQuery, args...)
 	<-m.chpool
-	return scanner.NewResult(rs), err
+
+	if err != nil {
+		return nil, err
+	}
+
+	nInsert, err := rs.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	nCount, err := rs.RowsAffected()
+
+	return scanner.NewResult(nInsert, nCount), err
 }
 
 func (m *TMsSQLDB) transaction() (*sql.Tx, error) {
