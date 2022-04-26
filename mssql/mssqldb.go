@@ -31,12 +31,12 @@ func (m *TMsSQLDB) init(strConnect string) {
 		return
 	}
 
-	zaplog.Errorf("数据库连接出现问题 connect = [%s] err = [%v]", strConnect, err)
+	zaplog.Ins.Errorf("数据库连接出现问题 connect = [%s] err = [%v]", strConnect, err)
 }
 
 func (m *TMsSQLDB) queryRow(strQuery string, args ...interface{}) (*scanner.TRow, error) {
 	if m.pDB == nil {
-		zaplog.Errorf("queryRow [db == nil]")
+		zaplog.Ins.Errorf("queryRow [db == nil]")
 		return nil, errors.New("不存在DB")
 	}
 
@@ -49,7 +49,7 @@ func (m *TMsSQLDB) queryRow(strQuery string, args ...interface{}) (*scanner.TRow
 
 func (m *TMsSQLDB) queryRows(strQuery string, args ...interface{}) (*scanner.TRows, error) {
 	if m.pDB == nil {
-		zaplog.Errorf("queryRows [db == nil]")
+		zaplog.Ins.Errorf("queryRows [db == nil]")
 		return nil, errors.New("不存在DB")
 	}
 	m.chpool <- 1
@@ -60,7 +60,7 @@ func (m *TMsSQLDB) queryRows(strQuery string, args ...interface{}) (*scanner.TRo
 
 func (m *TMsSQLDB) exec(strQuery string, args ...interface{}) (*scanner.TResult, error) {
 	if m.pDB == nil {
-		zaplog.Errorf("exec [db == nil]")
+		zaplog.Ins.Errorf("exec [db == nil]")
 		return nil, errors.New("不存在DB")
 	}
 
@@ -84,7 +84,7 @@ func (m *TMsSQLDB) exec(strQuery string, args ...interface{}) (*scanner.TResult,
 
 func (m *TMsSQLDB) transaction() (*sql.Tx, error) {
 	if m.pDB == nil {
-		zaplog.Errorf("transaction")
+		zaplog.Ins.Errorf("transaction")
 		return nil, errors.New("不存在DB")
 	}
 

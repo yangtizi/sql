@@ -22,7 +22,7 @@ func NewDB(strConnect string) *TMongoDB {
 func (m *TMongoDB) init(strConnect string) {
 	mongo, err := mgo.Dial(strConnect)
 	if err != nil {
-		zaplog.Errorf("%v", err)
+		zaplog.Ins.Errorf("%v", err)
 		return
 	}
 

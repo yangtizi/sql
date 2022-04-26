@@ -21,7 +21,7 @@ func init() {
 
 // 5*time.Minute, 10*time.Minute
 func NewCache(defaultExpiration, cleanupInterval time.Duration) *TCache {
-	zaplog.Infof("缓存正在初始化, 超时时间=[%v], 清理时间=[%v]", defaultExpiration, cleanupInterval)
+	zaplog.Ins.Infof("缓存正在初始化, 超时时间=[%v], 清理时间=[%v]", defaultExpiration, cleanupInterval)
 	instance.cache = gocache.New(defaultExpiration, cleanupInterval)
 	return instance
 }

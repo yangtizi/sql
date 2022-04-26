@@ -4,9 +4,8 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/yangtizi/log/zaplog"
-
 	_ "github.com/denisenkom/go-mssqldb" // mssql 数据库
+	"github.com/yangtizi/log/zaplog"
 	"gopkg.in/mgo.v2"
 )
 
@@ -21,10 +20,10 @@ var instance *TMongoDB
 // 		}
 // 		return instance.pDB.DB(strDatabase).C(strCollection), nil
 // 	}
-// 	zaplog.Debugf("%v, %s, %s", agent, strDatabase, strCollection)
+// 	zaplog.Ins.Debugf("%v, %s, %s", agent, strDatabase, strCollection)
 // 	v, ok := mapMongo.Load(agent)
 // 	if !ok {
-// 		zaplog.Errorf("Exec 不存在索引")
+// 		zaplog.Ins.Errorf("Exec 不存在索引")
 // 		return nil, errors.New("不存在的DB索引")
 // 	}
 // 	return v.(*TMongoDB).pDB.DB(strDatabase).C(strCollection), nil
@@ -34,7 +33,7 @@ var instance *TMongoDB
 func GetDB(agent interface{}) (*mgo.Session, error) {
 	if agent == nil {
 		if instance == nil {
-			zaplog.Errorf("不存在的DB索引")
+			zaplog.Ins.Errorf("不存在的DB索引")
 			return nil, errors.New("不存在的DB索引")
 		}
 
@@ -43,7 +42,7 @@ func GetDB(agent interface{}) (*mgo.Session, error) {
 
 	v, ok := mapMongo.Load(agent)
 	if !ok {
-		zaplog.Errorf("Exec 不存在索引")
+		zaplog.Ins.Errorf("Exec 不存在索引")
 		return nil, errors.New("不存在的DB索引")
 	}
 	return v.(*TMongoDB).pDB.Copy(), nil
@@ -53,7 +52,7 @@ func GetDB(agent interface{}) (*mgo.Session, error) {
 func InitDB(agent interface{}, strConnect string) {
 	if agent == nil {
 		instance = NewDB(strConnect)
-		zaplog.Infof("正在连接数据库 agent = [%v], strConnect = [%s]", "默认", strConnect)
+		zaplog.Ins.Infof("正在连接数据库 agent = [%v], strConnect = [%s]", "默认", strConnect)
 		return
 	}
 
@@ -63,10 +62,10 @@ func InitDB(agent interface{}, strConnect string) {
 		// * 创建新的DB指针
 		pMongo := NewDB(strConnect)
 
-		zaplog.Infof("正在连接数据库 agent = [%v], strConnect = [%s]", agent, strConnect)
+		zaplog.Ins.Infof("正在连接数据库 agent = [%v], strConnect = [%s]", agent, strConnect)
 		mapMongo.Store(agent, pMongo)
 		return
 	}
 
-	zaplog.Println("已经存在确有重复创建")
+	zaplog.Ins.Println("已经存在确有重复创建")
 }

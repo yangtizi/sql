@@ -25,7 +25,7 @@ func (m *TEtcdDB) init(endpoints []string) {
 		DialTimeout: 5 * time.Second,
 	})
 	if err != nil {
-		zaplog.Errorf("etcd连接数据库失败 endpoints = [%v] err = [%v]",
+		zaplog.Ins.Errorf("etcd连接数据库失败 endpoints = [%v] err = [%v]",
 			endpoints, err)
 		return
 	}
@@ -34,7 +34,7 @@ func (m *TEtcdDB) init(endpoints []string) {
 
 func (m *TEtcdDB) Put(strKey string, strValue string, opts ...clientv3.OpOption) (*clientv3.PutResponse, error) {
 	if m.pClient == nil {
-		zaplog.Errorf("Put [pClient == nil]")
+		zaplog.Ins.Errorf("Put [pClient == nil]")
 		return nil, errors.New("不存在DB")
 	}
 

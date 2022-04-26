@@ -5,21 +5,20 @@ import (
 	"errors"
 	"sync"
 
+	_ "github.com/denisenkom/go-mssqldb" // mssql 数据库
 	"github.com/yangtizi/log/zaplog"
 	"github.com/yangtizi/sql/scanner"
-
-	_ "github.com/denisenkom/go-mssqldb" // mssql 数据库
 )
 
 var mapMSSQL sync.Map
 
 // QueryRow (agent 代理商编号, strQuery sql脚本, args 脚本参数)
 func QueryRow(agent interface{}, strQuery string, args ...interface{}) (*scanner.TRow, error) {
-	zaplog.Debugf("agent = [%v], strQuery = [%s]", agent, strQuery)
-	zaplog.Debug("[+] ", args)
+	zaplog.Ins.Debugf("agent = [%v], strQuery = [%s]", agent, strQuery)
+	zaplog.Ins.Debug("[+] ", args)
 	v, ok := mapMSSQL.Load(agent)
 	if !ok {
-		zaplog.Errorf("QueryRow 不存在索引")
+		zaplog.Ins.Errorf("QueryRow 不存在索引")
 		return nil, errors.New("不存在的DB索引")
 	}
 
@@ -28,11 +27,11 @@ func QueryRow(agent interface{}, strQuery string, args ...interface{}) (*scanner
 
 // QueryRows (agent 代理商编号, strQuery sql脚本, args 脚本参数)
 func QueryRows(agent interface{}, strQuery string, args ...interface{}) (*scanner.TRows, error) {
-	zaplog.Debugf("agent = [%v], strQuery = [%s]", agent, strQuery)
-	zaplog.Debug("[+] ", args)
+	zaplog.Ins.Debugf("agent = [%v], strQuery = [%s]", agent, strQuery)
+	zaplog.Ins.Debug("[+] ", args)
 	v, ok := mapMSSQL.Load(agent)
 	if !ok {
-		zaplog.Errorf("QueryRows 不存在索引")
+		zaplog.Ins.Errorf("QueryRows 不存在索引")
 		return nil, errors.New("不存在的DB索引")
 	}
 
@@ -41,11 +40,11 @@ func QueryRows(agent interface{}, strQuery string, args ...interface{}) (*scanne
 
 // Exec (agent 代理商编号, strQuery sql脚本, args 脚本参数)
 func Exec(agent interface{}, strQuery string, args ...interface{}) (*scanner.TResult, error) {
-	zaplog.Debugf("agent = [%v], strQuery = [%s]", agent, strQuery)
-	zaplog.Debug("[+] ", args)
+	zaplog.Ins.Debugf("agent = [%v], strQuery = [%s]", agent, strQuery)
+	zaplog.Ins.Debug("[+] ", args)
 	v, ok := mapMSSQL.Load(agent)
 	if !ok {
-		zaplog.Errorf("Exec 不存在索引")
+		zaplog.Ins.Errorf("Exec 不存在索引")
 		return nil, errors.New("不存在的DB索引")
 	}
 
@@ -54,10 +53,10 @@ func Exec(agent interface{}, strQuery string, args ...interface{}) (*scanner.TRe
 
 // Transaction 事务
 func Transaction(agent interface{}) (*sql.Tx, error) {
-	zaplog.Debugf("Transaction begin")
+	zaplog.Ins.Debugf("Transaction begin")
 	v, ok := mapMSSQL.Load(agent)
 	if !ok {
-		zaplog.Errorf("Transaction 不存在索引")
+		zaplog.Ins.Errorf("Transaction 不存在索引")
 		return nil, errors.New("不存在的DB索引")
 	}
 
@@ -71,7 +70,7 @@ func InitDB(agent interface{}, strConnect string) {
 		// * 创建新的DB指针
 		pMsSQL := NewDB(strConnect)
 
-		zaplog.Infof("正在连接数据库 agent = [%v], strConnect = [%s]", agent, strConnect)
+		zaplog.Ins.Infof("正在连接数据库 agent = [%v], strConnect = [%s]", agent, strConnect)
 		mapMSSQL.Store(agent, pMsSQL)
 		return
 	}

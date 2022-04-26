@@ -23,7 +23,7 @@ func InitDB(agent interface{}, endpoints []string) {
 	if !ok {
 
 		pEtcd := NewDB(endpoints)
-		zaplog.Infof("正在连接Etcd 数据库")
+		zaplog.Ins.Infof("正在连接Etcd 数据库")
 
 		mapETCD.Store(agent, pEtcd)
 		return
