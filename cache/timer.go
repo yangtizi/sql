@@ -13,6 +13,7 @@ func (m *TTimer) Run(c *TCache) {
 	for {
 		select {
 		case <-ticker.C: // 到时间, 定期清理
+			c.SaveFile()
 			c.DeleteExpired()
 		case <-m.stop: // 删除计时器
 			ticker.Stop()

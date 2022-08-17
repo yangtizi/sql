@@ -35,3 +35,15 @@ func Delete(k string) {
 func Clean() {
 	instance.Flush()
 }
+
+// 保存到文件
+func SaveToFile(strFilename string) error {
+	instance.FileName = strFilename
+	return instance.SaveFile()
+}
+
+//
+func LoadFromFile(strFilename string) error {
+	instance.FileName = strFilename
+	return instance.LoadFile()
+}

@@ -1,7 +1,11 @@
 package cache
 
 import (
+	"encoding/gob"
+	"errors"
 	"fmt"
+	"io"
+	"os"
 	"runtime"
 	"sync"
 	"time"
@@ -15,6 +19,7 @@ const (
 )
 
 type TCache struct {
+	FileName          string                    // 文件名
 	defaultExpiration time.Duration             // 默认超时
 	items             map[string]TItem          // 内容
 	mu                sync.RWMutex              // 互斥锁
@@ -307,6 +312,70 @@ func (m *TCache) Flush() {
 	m.mu.Lock()
 	m.items = map[string]TItem{}
 	m.mu.Unlock()
+}
+
+func (m *TCache) Load(r io.Reader) error {
+	dec := gob.NewDecoder(r)
+	items := map[string]TItem{}
+	err := dec.Decode(&items)
+	if err == nil {
+		m.mu.Lock()
+		defer m.mu.Unlock()
+		for k, v := range items {
+			ov, found := m.items[k]
+			if !found || ov.Expired() {
+				m.items[k] = v
+			}
+		}
+	}
+	return err
+}
+func (m *TCache) Save(w io.Writer) (err error) {
+	enc := gob.NewEncoder(w)
+	defer func() {
+		if x := recover(); x != nil {
+			err = fmt.Errorf("Error registering item types with Gob library")
+		}
+	}()
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	for _, v := range m.items {
+		gob.Register(v.Object)
+	}
+	err = enc.Encode(&m.items)
+	return
+}
+
+func (m *TCache) LoadFile() error {
+	if m.FileName == "" {
+		return errors.New("no file name")
+	}
+	fp, err := os.Open(m.FileName)
+	if err != nil {
+		return err
+	}
+	err = m.Load(fp)
+	if err != nil {
+		fp.Close()
+		return err
+	}
+	return fp.Close()
+}
+
+func (m *TCache) SaveFile() error {
+	if m.FileName == "" {
+		return errors.New("no file name")
+	}
+	fp, err := os.Create(m.FileName)
+	if err != nil {
+		return err
+	}
+	err = m.Save(fp)
+	if err != nil {
+		fp.Close()
+		return err
+	}
+	return fp.Close()
 }
 
 //返回具有给定默认过期时间和清理的新缓存
