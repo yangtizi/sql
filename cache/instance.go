@@ -3,13 +3,7 @@ package cache
 import "time"
 
 // 单例, 方便直接调用函数使用
-var instance = &TCache{}
-
-func init() {
-	if instance == nil {
-		instance = New(12*time.Hour, 10*time.Minute) // 缓存默认时间12小时,   10分钟检测一次无用的缓存
-	}
-}
+var instance = New(12*time.Hour, 10*time.Minute) // 缓存默认时间12小时,   10分钟检测一次无用的缓存
 
 // 获取缓存
 func Get(k string) (interface{}, bool) {
@@ -42,7 +36,6 @@ func SaveToFile(strFilename string) error {
 	return instance.SaveFile()
 }
 
-//
 func LoadFromFile(strFilename string) error {
 	instance.FileName = strFilename
 	return instance.LoadFile()
