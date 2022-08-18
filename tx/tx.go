@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/yangtizi/log/zaplog"
+	"github.com/yangtizi/sql/scanner"
 )
 
 // TTx 封装的
@@ -18,10 +19,24 @@ func NewTx(tx *sql.Tx) *TTx {
 	return t
 }
 
-func (m *TTx) Exec(strQuery string, args ...interface{}) (sql.Result, error) {
+func (m *TTx) Exec(strQuery string, args ...interface{}) (*scanner.TResult, error) {
 	zaplog.Ins.Debugf("strQuery = [%s]", strQuery)
 	zaplog.Ins.Debug("[+] ", args)
-	return m.tx.Exec(strQuery, args...)
+	rs, err := m.tx.Exec(strQuery, args...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	nInsert, err := rs.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	nCount, err := rs.RowsAffected()
+
+	return scanner.NewResult(nInsert, nCount), err
+
 }
 
 func (m *TTx) Commit() error {

@@ -23,7 +23,6 @@ func Select(m IBaseInfo, strWhere string, params ...interface{}) error {
 	return m.ScanFrom(row)
 }
 
-//
 func Update(m IBaseInfo, strSet string, strWhere string, params ...any) (*scanner.TResult, error) {
 	r, err := mysql.Exec(m.Dataname(), "UPDATE "+m.Tablename()+" SET "+strSet+" "+strWhere, params...)
 	return r, err
@@ -44,4 +43,5 @@ func SelectList(m IBaseList, strWhere string, params ...any) error {
 	}
 	defer rows.Close()
 
+	return nil
 }
