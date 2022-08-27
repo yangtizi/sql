@@ -1,6 +1,6 @@
 package mongo
 
-import "gopkg.in/mgo.v2/bson"
+import "go.mongodb.org/mongo-driver/bson"
 
 // M 新的
 type M bson.M
