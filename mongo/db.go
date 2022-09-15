@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"context"
 	"errors"
 	"sync"
 
@@ -28,6 +29,26 @@ var instance *TMongoDB
 // 	}
 // 	return v.(*TMongoDB).pDB.DB(strDatabase).C(strCollection), nil
 // }
+
+// 获取一个事务
+func GetTX(agent interface{}, callback func(tx context.Context) (interface{}, error)) (interface{}, error) {
+	if agent == nil {
+		if instance == nil {
+			zaplog.Ins.Errorf("不存在的DB索引")
+			return nil, errors.New("不存在的DB索引")
+		}
+
+		return instance.pDB.DoTransaction(context.Background(), callback)
+	}
+
+	v, ok := mapMongo.Load(agent)
+	if !ok {
+		zaplog.Ins.Errorf("Exec 不存在索引")
+		return nil, errors.New("不存在的DB索引")
+	}
+
+	return v.(*TMongoDB).pDB.DoTransaction(context.Background(), callback)
+}
 
 // GetDB 获取DB
 func GetDB(agent interface{}, D string, C string) (*qmgo.Collection, error) {
