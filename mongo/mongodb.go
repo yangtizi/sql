@@ -1,15 +1,17 @@
 package mongo
 
 import (
+	"context"
+
+	"github.com/qiniu/qmgo"
 	"github.com/yangtizi/log/zaplog"
-	"gopkg.in/mgo.v2"
 )
 
 // TMongoDB .
 type TMongoDB struct {
 	chpool     chan int
 	strConnect string
-	pDB        *mgo.Session
+	pDB        *qmgo.Client
 }
 
 // NewDB 新DB
@@ -20,12 +22,14 @@ func NewDB(strConnect string) *TMongoDB {
 }
 
 func (m *TMongoDB) init(strConnect string) {
-	mongo, err := mgo.Dial(strConnect)
+	client, err := qmgo.NewClient(context.Background(), &qmgo.Config{Uri: strConnect})
+
+	// mongo, err := mgo.Dial(strConnect)
 	if err != nil {
 		zaplog.Ins.Errorf("%v", err)
 		return
 	}
 
-	m.pDB = mongo
+	m.pDB = client
 	m.strConnect = strConnect
 }
