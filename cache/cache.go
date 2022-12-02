@@ -89,7 +89,6 @@ func SaveToFile(strFilename string) error {
 	return instance.cache.SaveFile(strFilename)
 }
 
-//
 func LoadFromFile(strFilename string) error {
 	return instance.cache.LoadFile(strFilename)
 }

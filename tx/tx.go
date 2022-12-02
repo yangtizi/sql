@@ -19,16 +19,16 @@ func NewTx(tx *sql.Tx) *TTx {
 }
 
 func (m *TTx) Exec(strQuery string, args ...interface{}) (sql.Result, error) {
-	zaplog.Ins.Debugf("strQuery = [%s]", strQuery)
-	zaplog.Ins.Debug("[+] ", args)
+	zaplog.Map("Tx").Debugf("strQuery = [%s]", strQuery)
+	zaplog.Map("Tx").Debug("[+] ", args)
 	return m.tx.Exec(strQuery, args...)
 }
 
 func (m *TTx) Commit() error {
-	zaplog.Ins.Debugf("Commit")
+	zaplog.Map("Tx").Debugf("Commit")
 	return m.tx.Commit()
 }
 func (m *TTx) Rollback() error {
-	zaplog.Ins.Debugf("Rollback")
+	zaplog.Map("Tx").Debugf("Rollback")
 	return m.tx.Rollback()
 }
