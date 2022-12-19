@@ -1,44 +1,28 @@
 package redis
 
 import (
-	"time"
+	"context"
 
-	r "github.com/gomodule/redigo/redis"
+	r "github.com/go-redis/redis/v8"
 )
 
 // TRedisDB 单个的数据库
 type TRedisDB struct {
-	// chpool     chan int
-	strConnect string
-	// redisConn   r.Conn
-	redisClient *r.Pool
+	strConnect  string
+	redisClient *r.Client
 }
 
-func (m *TRedisDB) init(strConnect string) {
-	m.redisClient = &r.Pool{
-		MaxIdle:     30,
-		MaxActive:   1000, // 最大连接数，
-		IdleTimeout: 3600 * time.Second,
-		Wait:        true,
-		Dial: func() (r.Conn, error) {
-			con, err := r.Dial("tcp", strConnect)
-			if err != nil {
-				return nil, err
-			}
-			return con, nil
-		},
+func (m *TRedisDB) init(strConnect string) error {
+	opt, err := r.ParseURL(strConnect)
+	if err != nil {
+		return err
 	}
-
 	m.strConnect = strConnect
+	rdb := r.NewClient(opt)
+	m.redisClient = rdb
+	return nil
 }
 
-func (m *TRedisDB) do(strCommand string, args ...interface{}) (TValues, error) {
-	rc := m.redisClient.Get()
-	// 用完后将连接放回连接池
-	defer rc.Close()
-	if rc.Err() != nil {
-		return nil, rc.Err()
-	}
-
-	return r.Values(rc.Do(strCommand, args...))
+func (m *TRedisDB) do(strCommand string, args ...interface{}) *r.Cmd {
+	return m.redisClient.Do(context.Background(), args...)
 }

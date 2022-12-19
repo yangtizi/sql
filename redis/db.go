@@ -4,8 +4,8 @@ import (
 	"errors"
 	"sync"
 
+	r "github.com/go-redis/redis/v8"
 	"github.com/yangtizi/go/sysutils"
-
 	"github.com/yangtizi/log/zaplog"
 )
 
@@ -37,33 +37,34 @@ func (m TValues) S(n int) string {
 var mapRedis sync.Map
 
 // Do (strAgent 代理商编号, strCommand sql脚本, args 脚本参数)
-func Do(strAgent string, strCommand string, args ...interface{}) (TValues, error) {
+func Do(strAgent string, strCommand string, args ...interface{}) (*r.Cmd, error) {
 	v, ok := mapRedis.Load(strAgent)
 	if !ok {
 		return nil, errors.New("不存在的DB索引")
 	}
 
-	return v.(*TRedisDB).do(strCommand, args...)
+	cmd := v.(*TRedisDB).do(strCommand, args...)
+	return cmd, cmd.Err()
 }
 
-// HMGet (strAgent 代理商编号, args 脚本参数)
-func HMGet(strAgent string, args ...interface{}) (TValues, error) {
-	v, ok := mapRedis.Load(strAgent)
-	if !ok {
-		return nil, errors.New("不存在的DB索引")
-	}
+// // HMGet (strAgent 代理商编号, args 脚本参数)
+// func HMGet(strAgent string, args ...interface{}) (TValues, error) {
+// 	v, ok := mapRedis.Load(strAgent)
+// 	if !ok {
+// 		return nil, errors.New("不存在的DB索引")
+// 	}
 
-	return v.(*TRedisDB).do("hmget", args...)
-}
+// 	return v.(*TRedisDB).do("hmget", args...)
+// }
 
-func HMSet(strAgent string, args ...interface{}) (TValues, error) {
-	v, ok := mapRedis.Load(strAgent)
-	if !ok {
-		return nil, errors.New("不存在的DB索引")
-	}
+// func HMSet(strAgent string, args ...interface{}) (TValues, error) {
+// 	v, ok := mapRedis.Load(strAgent)
+// 	if !ok {
+// 		return nil, errors.New("不存在的DB索引")
+// 	}
 
-	return v.(*TRedisDB).do("hmset", args...)
-}
+// 	return v.(*TRedisDB).do("hmset", args...)
+// }
 
 // InitDB 初始化DB (strAgent 代理商编号, strReadConnect 从库连接字符串, strWriteConnect 主库连接字符串)
 func InitDB(strAgent string, strConnect string) {
