@@ -37,14 +37,24 @@ func (m TValues) S(n int) string {
 var mapRedis sync.Map
 
 // Do (strAgent 代理商编号, strCommand sql脚本, args 脚本参数)
-func Do(strAgent string, strCommand string, args ...interface{}) (*r.Cmd, error) {
+func Do(strAgent string, args ...any) (*r.Cmd, error) {
 	v, ok := mapRedis.Load(strAgent)
 	if !ok {
 		return nil, errors.New("不存在的DB索引")
 	}
 
-	cmd := v.(*TRedisDB).do(strCommand, args...)
+	cmd := v.(*TRedisDB).do(args...)
 	return cmd, cmd.Err()
+}
+
+func Client(strAgent string) *r.Client {
+	v, ok := mapRedis.Load(strAgent)
+	if !ok {
+		return nil
+	}
+
+	cli := v.(*TRedisDB).client()
+	return cli
 }
 
 // // HMGet (strAgent 代理商编号, args 脚本参数)
