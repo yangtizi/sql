@@ -2,25 +2,65 @@ package redis
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 	"sync"
 
 	r "github.com/go-redis/redis/v8"
-	"github.com/yangtizi/go/sysutils"
 	"github.com/yangtizi/log/zaplog"
 )
 
 // TValues 快速解析
 type TValues []interface{}
 
+func toString(val interface{}) (string, error) {
+	switch val := val.(type) {
+	case string:
+		return val, nil
+	default:
+		err := fmt.Errorf("redis: unexpected type=%T for String", val)
+		return "", err
+	}
+}
+
+func toInt64(val interface{}) (int64, error) {
+	switch val := val.(type) {
+	case int64:
+		return val, nil
+	case string:
+		return strconv.ParseInt(val, 10, 64)
+	default:
+		err := fmt.Errorf("redis: unexpected type=%T for Int64", val)
+		return 0, err
+	}
+}
+
+func toFloat64(val interface{}) (float64, error) {
+	switch val := val.(type) {
+	case int64:
+		return float64(val), nil
+	case string:
+		return strconv.ParseFloat(val, 64)
+	default:
+		err := fmt.Errorf("redis: unexpected type=%T for Float64", val)
+		return 0, err
+	}
+}
+
 // I 快速获取整数
-func (m TValues) I(n int) int {
+func (m TValues) I(n int) int64 {
 	if n > len(m) {
 		return 0
 	}
 	if m[n] == nil {
 		return 0
 	}
-	return sysutils.StrToIntDef(string(m[n].([]byte)), 0)
+	i64, err := toInt64(m[n])
+	if err != nil {
+		return 0
+	}
+
+	return i64
 }
 
 // S 快速获取字符串
@@ -31,7 +71,11 @@ func (m TValues) S(n int) string {
 	if m[n] == nil {
 		return ""
 	}
-	return string(m[n].([]byte))
+	s, err := toString(m[n])
+	if err != nil {
+		return ""
+	}
+	return s
 }
 
 var mapRedis sync.Map
