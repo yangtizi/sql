@@ -19,6 +19,10 @@ var mapMYSQL sync.Map
 func QueryRow(strAgent string, strQuery string, args ...interface{}) (*sql.Row, error) {
 	strQuery2 := strings.ReplaceAll(strQuery, "\n", " ")
 	strQuery2 = strings.ReplaceAll(strQuery2, "\r", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "\t", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
 
 	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery2)
 	zaplog.Map("mysql").Debug("[+] ", args)
@@ -34,6 +38,10 @@ func QueryRow(strAgent string, strQuery string, args ...interface{}) (*sql.Row, 
 func QueryRows(strAgent string, strQuery string, args ...interface{}) (*sql.Rows, error) {
 	strQuery2 := strings.ReplaceAll(strQuery, "\n", " ")
 	strQuery2 = strings.ReplaceAll(strQuery2, "\r", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "\t", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
 
 	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery2)
 	zaplog.Map("mysql").Debug("[+] ", args)
@@ -49,6 +57,10 @@ func QueryRows(strAgent string, strQuery string, args ...interface{}) (*sql.Rows
 func QueryRowsEx(strAgent string, strQuery string, args ...interface{}) ([]map[string]string, error) {
 	strQuery2 := strings.ReplaceAll(strQuery, "\n", " ")
 	strQuery2 = strings.ReplaceAll(strQuery2, "\r", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "\t", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
 	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery2)
 	zaplog.Map("mysql").Debug("[+] ", args)
 	v, ok := mapMYSQL.Load(strAgent)
@@ -96,6 +108,10 @@ func QueryRowsEx(strAgent string, strQuery string, args ...interface{}) ([]map[s
 func Exec(strAgent string, strQuery string, args ...interface{}) (*scanner.TResult, error) {
 	strQuery2 := strings.ReplaceAll(strQuery, "\n", " ")
 	strQuery2 = strings.ReplaceAll(strQuery2, "\r", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "\t", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "  ", " ")
 	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery2)
 	zaplog.Map("mysql").Debug("[+] ", args)
 	v, ok := mapMYSQL.Load(strAgent)
