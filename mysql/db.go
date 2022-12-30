@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"errors"
+	"strings"
 	"sync"
 
 	"github.com/yangtizi/log/zaplog"
@@ -16,7 +17,10 @@ var mapMYSQL sync.Map
 
 // QueryRow (strAgent 代理商编号, strQuery sql脚本, args 脚本参数)
 func QueryRow(strAgent string, strQuery string, args ...interface{}) (*sql.Row, error) {
-	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery)
+	strQuery2 := strings.ReplaceAll(strQuery, "\n", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "\r", " ")
+
+	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery2)
 	zaplog.Map("mysql").Debug("[+] ", args)
 	v, ok := mapMYSQL.Load(strAgent)
 	if !ok {
@@ -28,7 +32,10 @@ func QueryRow(strAgent string, strQuery string, args ...interface{}) (*sql.Row, 
 
 // QueryRows (strAgent 代理商编号, strQuery sql脚本, args 脚本参数)
 func QueryRows(strAgent string, strQuery string, args ...interface{}) (*sql.Rows, error) {
-	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery)
+	strQuery2 := strings.ReplaceAll(strQuery, "\n", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "\r", " ")
+
+	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery2)
 	zaplog.Map("mysql").Debug("[+] ", args)
 	v, ok := mapMYSQL.Load(strAgent)
 	if !ok {
@@ -40,7 +47,9 @@ func QueryRows(strAgent string, strQuery string, args ...interface{}) (*sql.Rows
 
 // 高级Rows请求, 直接返回MAP
 func QueryRowsEx(strAgent string, strQuery string, args ...interface{}) ([]map[string]string, error) {
-	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery)
+	strQuery2 := strings.ReplaceAll(strQuery, "\n", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "\r", " ")
+	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery2)
 	zaplog.Map("mysql").Debug("[+] ", args)
 	v, ok := mapMYSQL.Load(strAgent)
 	if !ok {
@@ -85,7 +94,9 @@ func QueryRowsEx(strAgent string, strQuery string, args ...interface{}) ([]map[s
 
 // Exec (strAgent 代理商编号, strQuery sql脚本, args 脚本参数)
 func Exec(strAgent string, strQuery string, args ...interface{}) (*scanner.TResult, error) {
-	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery)
+	strQuery2 := strings.ReplaceAll(strQuery, "\n", " ")
+	strQuery2 = strings.ReplaceAll(strQuery2, "\r", " ")
+	zaplog.Map("mysql").Debugf("strAgent = [%s], strQuery = [%s]", strAgent, strQuery2)
 	zaplog.Map("mysql").Debug("[+] ", args)
 	v, ok := mapMYSQL.Load(strAgent)
 	if !ok {
